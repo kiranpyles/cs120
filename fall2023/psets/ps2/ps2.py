@@ -61,7 +61,7 @@ class BinarySearchTree:
         if left_size > ind and self.left is not None:
             return self.left.select(ind)
         if left_size < ind and self.right is not None:
-            return self.right.select(ind)
+            return self.right.select(ind - left_size - 1)
         return None
 
 
@@ -94,12 +94,13 @@ class BinarySearchTree:
         elif self.key > key: 
             if self.left is None:
                 self.left = BinarySearchTree(self.debugger)
+            self.size += 1
             self.left.insert(key)
         elif self.key < key:
             if self.right is None:
                 self.right = BinarySearchTree(self.debugger)
+            self.size += 1
             self.right.insert(key)
-        self.calculate_sizes()
         return self
 
     
@@ -127,7 +128,44 @@ class BinarySearchTree:
        11 
     '''
     def rotate(self, direction, child_side):
-        # Your code goes here
+        if direction == "L":
+            if child_side == "L":
+                if not self.left:
+                    return self
+                to_rotate = self.left
+                self.left = to_rotate.right
+                to_rotate.right = self.left.left
+                self.left.left = to_rotate
+                self.left.size = to_rotate.size
+                to_rotate.size = 1 + (to_rotate.left.size if to_rotate.left else 0) + (to_rotate.right.size if to_rotate.right else 0)
+            else:
+                if not self.right:
+                    return self
+                to_rotate = self.right
+                self.right = to_rotate.right
+                to_rotate.right = self.right.left
+                self.right.left = to_rotate
+                self.right.size = to_rotate.size
+                to_rotate.size = 1 + (to_rotate.left.size if to_rotate.left else 0) + (to_rotate.right.size if to_rotate.right else 0)
+        else:
+            if child_side == "R":
+                if not self.right:
+                    return self
+                to_rotate = self.right
+                self.right = to_rotate.left
+                to_rotate.left = self.right.right
+                self.right.right = to_rotate
+                self.right.size = to_rotate.size
+                to_rotate.size = 1 + (to_rotate.left.size if to_rotate.left else 0) + (to_rotate.right.size if to_rotate.right else 0)
+            else:
+                if not self.left:
+                    return self
+                to_rotate = self.left
+                self.left = to_rotate.left
+                to_rotate.left = self.left.right
+                self.left.right = to_rotate
+                self.left.size = to_rotate.size
+                to_rotate.size = 1 + (to_rotate.left.size if to_rotate.left else 0) + (to_rotate.right.size if to_rotate.right else 0)
         return self
 
     def print_bst(self):
